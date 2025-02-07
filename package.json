@@ -1,0 +1,25 @@
+{
+  "name": "health-plan-api",
+  "version": "1.0.0",
+  "description": "REST API which handles medical health insurance plans",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BalasubramanianU/health-plan-API.git"
+  },
+  "author": "Balasubramanian Ulaganathan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BalasubramanianU/health-plan-API/issues"
+  },
+  "homepage": "https://github.com/BalasubramanianU/health-plan-API#readme",
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9",
+    "redis": "^4.7.0"
+  }
+}
