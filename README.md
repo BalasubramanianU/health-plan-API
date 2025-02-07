@@ -2,6 +2,8 @@
 
 # Demo:
 
+**Positive Scenarios**
+
 - `POST` request with localhost:3000/v1/plan/ with the JSON payload. Returns `201` with the `ETag` in the header in the response
 
 ```json
@@ -62,3 +64,14 @@
 - `GET` request with localhost:3000/v1/plan/1234vxc2324sdf-501 with the header `If-None-Match: ce0482a9a2aab5133a68d4f26ca2d042`. The header value is the ETag value taken from POST response. Returns `304`
 - Same `GET` request again without `If-None-Match` header or with incorrect value in it. Returns `200` with the appropriate value of the objectId in the URL
 - `DELETE` request with localhost:3000/v1/plan/1234vxc2324sdf-501. Returns `204` for success
+
+**Negative Scenarios**
+
+- POST -> `400` for non-json type payload or invalid json, `415` for wrong payload type
+- GET -> `404` for object not present in database
+- DELETE -> `404` for object not present in the database to delete
+
+Tech Stack
+
+- Node + Express
+- Redis
