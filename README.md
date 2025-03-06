@@ -99,6 +99,8 @@
 - DELETE -> `404` for object not present in the database to delete
 - PATCH -> `400` for non-json type payload or invalid json, `404` for object not present, `412` for not trying to update the latest resource, `415` for wrong payload type
 
+# About
+
 **Tech Stack**
 
 - Node + Express
