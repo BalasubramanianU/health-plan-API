@@ -75,3 +75,9 @@ Tech Stack
 
 - Node + Express
 - Redis
+
+To Setup local environment: (Mac OS)
+
+1. brew services start redis
+2. `redis-cli` to connect to the running local redis server
+3. `keys *` to view all the keys and `get <key>` to see their values

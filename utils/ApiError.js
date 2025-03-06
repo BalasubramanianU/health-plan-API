@@ -7,12 +7,20 @@ class ApiError {
     return new ApiError(400);
   }
 
+  static unauthorized() {
+    return new ApiError(401);
+  }
+
   static notFound() {
     return new ApiError(404);
   }
 
   static methodNotAllowed() {
     return new ApiError(405);
+  }
+
+  static preConditionFailed() {
+    return new ApiError(412);
   }
 
   static unsupportedMediaType() {
