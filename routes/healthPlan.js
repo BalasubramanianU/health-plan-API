@@ -32,8 +32,34 @@ router.post("/", async (req, res, next) => {
   return res.status(201).send(req.body);
 });
 
+router.get("/", async (req, res, next) => {
+  try {
+    if (req.body && Object.keys(req.body).length > 0) {
+      return next(ApiError.badRequest());
+    }
+    const keys = await redisClient.keys("*");
+    let result = [];
+    for (let key of keys) {
+      const value = await redisClient.get(key);
+      result.push(JSON.parse(value));
+    }
+    const etag = etagCreater(JSON.stringify(result));
+    if (req.get("If-None-Match") && etag == req.get("If-None-Match")) {
+      return res.status(304).end();
+    }
+    res.set("Etag", etag);
+    return res.status(200).send(result);
+  } catch (err) {
+    console.log(err);
+    return next(ApiError.serviceUnavailable());
+  }
+});
+
 router.get("/:planId", async (req, res, next) => {
   try {
+    if (req.body && Object.keys(req.body).length > 0) {
+      return next(ApiError.badRequest());
+    }
     const response = await redisClient.get(req.params.planId);
     if (response == null) {
       return next(ApiError.notFound());

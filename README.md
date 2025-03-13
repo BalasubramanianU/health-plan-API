@@ -63,6 +63,7 @@
 
 - `GET` request with localhost:3000/v1/plan/1234vxc2324sdf-501 with the header `If-None-Match: ce0482a9a2aab5133a68d4f26ca2d042`. The header value is the ETag value taken from POST response. Returns `304`
 - Same `GET` request again without `If-None-Match` header or with incorrect value in it. Returns `200` with the appropriate value of the objectId in the URL
+- Similarly, for `GET`, with no plan id to fetch all the plans
 - `DELETE` request with localhost:3000/v1/plan/1234vxc2324sdf-501. Returns `204` for success
 - `PATCH` request with localhost:3000/v1/plan/1234vxc2324sdf-501. Returns `200` with the updated `ETag` for success. The payload for it would be
 
@@ -95,7 +96,7 @@
 **Negative Scenarios**
 
 - POST -> `400` for non-json type payload or invalid json, `415` for wrong payload type
-- GET -> `404` for object not present in database
+- GET -> `400` if the request has any payloads, `404` for object not present in database
 - DELETE -> `404` for object not present in the database to delete
 - PATCH -> `400` for non-json type payload or invalid json, `404` for object not present, `412` for not trying to update the latest resource, `415` for wrong payload type
 
