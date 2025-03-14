@@ -85,7 +85,8 @@ router.patch("/:planId", async (req, res, next) => {
     if (
       !req.body ||
       Object.keys(req.body).length === 0 ||
-      !ajv.validate(patchSchema, req.body)
+      !ajv.validate(patchSchema, req.body) ||
+      !req.get("If-Match")
     ) {
       return next(ApiError.badRequest());
     }
