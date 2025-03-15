@@ -6,11 +6,10 @@ const ApiError = require("../utils/ApiError");
  * Fetches Google's public JWK keys
  * @returns {Promise<Object>} Google's public keys
  */
-const getGooglePublicKeys = async () => {
+const getGooglePublicKeys = async (next) => {
   const response = await fetch("https://www.googleapis.com/oauth2/v3/certs");
   if (!response.ok) {
-    // change to proper error handling
-    throw new Error(`HTTP error! Status: ${response.status}`);
+    return next(ApiError.serviceUnavailable());
   }
   const data = await response.json();
   return data.keys;
@@ -19,13 +18,11 @@ const getGooglePublicKeys = async () => {
 // Middleware to verify Google OAuth2.0 Bearer JWT Token
 const verifyToken = async (req, res, next) => {
   if (!req.headers["authorization"]) {
-    // return res.status(400).send("Authorization header missing");
     return next(ApiError.badRequest());
   }
 
   const authHeaderParts = req.headers["authorization"].split(" ");
   if (authHeaderParts[0] !== "Bearer" || !authHeaderParts[1]) {
-    // return res.status(400).send("Invalid Bearer Token");
     return next(ApiError.badRequest());
   }
 
@@ -35,7 +32,6 @@ const verifyToken = async (req, res, next) => {
     // Decode JWT header
     const decodedHeader = jwt.decode(idToken, { complete: true });
     if (!decodedHeader) {
-      //   return res.status(400).send("Invalid JWT token");
       return next(ApiError.badRequest());
     }
 
@@ -43,12 +39,11 @@ const verifyToken = async (req, res, next) => {
     const alg = decodedHeader.header.alg;
 
     // Fetch Google's public keys
-    const keys = await getGooglePublicKeys();
+    const keys = await getGooglePublicKeys(next);
 
     // Find the correct key
     const key = keys.find((k) => k.kid === kid);
     if (!key) {
-      //   return res.status(400).send("Matching public key not found");
       return next(ApiError.badRequest());
     }
 
@@ -63,7 +58,6 @@ const verifyToken = async (req, res, next) => {
         "632426186384-tgm3tmmotmpfss1p7rb52fc5pg4lesv5.apps.googleusercontent.com",
     });
 
-    // req.user = payload; // Attach user info to the request
     next();
   } catch (err) {
     console.error(err);
