@@ -18,12 +18,12 @@ const getGooglePublicKeys = async (next) => {
 // Middleware to verify Google OAuth2.0 Bearer JWT Token
 const verifyToken = async (req, res, next) => {
   if (!req.headers["authorization"]) {
-    return next(ApiError.badRequest());
+    return next(ApiError.unauthorized());
   }
 
   const authHeaderParts = req.headers["authorization"].split(" ");
   if (authHeaderParts[0] !== "Bearer" || !authHeaderParts[1]) {
-    return next(ApiError.badRequest());
+    return next(ApiError.unauthorized());
   }
 
   const idToken = authHeaderParts[1];
@@ -32,7 +32,7 @@ const verifyToken = async (req, res, next) => {
     // Decode JWT header
     const decodedHeader = jwt.decode(idToken, { complete: true });
     if (!decodedHeader) {
-      return next(ApiError.badRequest());
+      return next(ApiError.unauthorized());
     }
 
     const kid = decodedHeader.header.kid;
@@ -44,7 +44,7 @@ const verifyToken = async (req, res, next) => {
     // Find the correct key
     const key = keys.find((k) => k.kid === kid);
     if (!key) {
-      return next(ApiError.badRequest());
+      return next(ApiError.unauthorized());
     }
 
     // Convert JWK to PEM
@@ -61,7 +61,6 @@ const verifyToken = async (req, res, next) => {
     next();
   } catch (err) {
     console.error(err);
-    // res.status(401).send("Unauthorized");
     return next(ApiError.unauthorized());
   }
 };
