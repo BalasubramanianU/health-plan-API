@@ -23,6 +23,11 @@ router.post("/", async (req, res, next) => {
     return next(ApiError.badRequest());
   }
 
+  const existingData = await redisClient.get(req.body["objectId"]);
+  if (existingData) {
+    return next(ApiError.conflict());
+  }
+
   // Save to Redis
   await redisClient.set(
     req.body["objectId"],

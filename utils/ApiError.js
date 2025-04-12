@@ -19,6 +19,10 @@ class ApiError {
     return new ApiError(405);
   }
 
+  static conflict() {
+    return new ApiError(409);
+  }
+
   static preConditionFailed() {
     return new ApiError(412);
   }
