@@ -1,0 +1,64 @@
+services:
+  # Elasticsearch service
+  elasticsearch:
+    container_name: elastic-container
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.12.0
+    restart: always
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    networks:
+      - app-network
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+
+  # Kibana service - UI for Elasticsearch
+  kibana:
+    container_name: kibana-container
+    image: "docker.elastic.co/kibana/kibana:7.12.0"
+    environment:
+      - "ELASTICSEARCH_HOSTS=http://elastic-container:9200"
+    networks:
+      - app-network
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
+
+  # RabbitMQ service
+  rabbitmq:
+    container_name: rabbitmq
+    image: "rabbitmq:3.8-management-alpine"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672" # AMQP protocol port
+      - "15672:15672" # Management UI port
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - app-network
+
+  # Redis service
+  redis:
+    container_name: redis
+    image: "redis:7-alpine"
+    command: redis-server --save 20 1 --loglevel warning
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  elasticsearch-data:
+  rabbitmq-data:
+  redis-data:

@@ -121,6 +121,7 @@ Setup Reference: https://blog.postman.com/how-to-access-google-apis-using-oauth-
 2. Redirect URI: https://oauth.pstmn.io/v1/callback
 3. After creation, you can see your client ID and secret, you have to later provide it in the Postman
 4. In your Postman, for the Authorization setup, choose OAuth 2.0 and setup,
+
    1. Callback URL - https://oauth.pstmn.io/v1/callback
    2. Auth URL - https://accounts.google.com/o/oauth2/v2/auth (since its google auth)
    3. Access token URL - https://oauth2.googleapis.com/token
@@ -128,3 +129,11 @@ Setup Reference: https://blog.postman.com/how-to-access-google-apis-using-oauth-
    5. Scope - openid email profile
    6. Initially, you would need to sign in, after it, you will receive the auth code, click `Get New Access Token`. Choose `Use Token` and change the token type to `ID Token` in the Postman Authorization settings page.
    7. Repeat step 7, whenever you need a new token or if your token expires
+
+# Accessing services in docker containers
+
+- Kibana - [localhost:](http://localhost:5601/app/dev_tools#/console)
+- RabbitMQ - http://localhost:15672/#/
+- ElasticSearch - http://localhost:9200
+- In terminal, `redis-cli` to access redis db
+  - once accessed, keys \*

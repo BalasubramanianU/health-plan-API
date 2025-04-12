@@ -1,0 +1,108 @@
+# Search for full list of objects
+GET /planindex/_search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+# Get a plan based on its id
+GET /planindex/_search
+{
+  "query": {
+    "term": {
+      "_id": "12xvxc345ssdsds-508"
+    }
+  }
+}
+
+# Get all the children objects of a parent object
+GET /planindex/_search
+{
+  "query": {
+    "has_parent": {
+      "parent_type": "plan", 
+      "query": {
+        "term": {
+          "_id": "12xvxc345ssdsds-508"
+        }
+      }
+    }
+  }
+}
+GET /planindex/_search
+{
+  "query": {
+    "has_parent": {
+      "parent_type": "linkedPlanServices", 
+      "query": {
+        "term": {
+          "_id": "27283xvx9sdf-507aaa"
+        }
+      }
+    }
+  }
+}
+
+# Get Parent of planCostShare with copay greater than or equal to 1
+GET /planindex/_search
+{
+  "query": {
+    "has_child": {
+      "type": "planCostShares", 
+      "query": {
+        "range": {
+          "copay": {
+            "gte": 1
+          }
+        }
+      }
+    }
+  }
+}
+
+# Get linkedPlanService of Plan
+GET /planindex/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "objectType": {
+              "value": "planservice"
+            }
+          }
+        },
+        {
+          "has_parent": {
+            "parent_type": "plan",
+            "query": {
+              "term": {
+                "_id": "12xvxc345ssdsds-508"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+# Get linkedPlanServices children
+GET /planindex/_search
+{
+  "query": {
+    "has_parent": {
+      "parent_type": "linkedPlanServices",
+      "query": {
+        "term": {
+          "_id": "27283xvx9asdff-504"
+        }
+      }
+    }
+  }
+}
+
+# Delete index
+DELETE /planindex

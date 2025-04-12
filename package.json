@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/BalasubramanianU/health-plan-API#readme",
   "dependencies": {
+    "@elastic/elasticsearch": "7.13",
     "ajv": "^8.17.1",
+    "amqplib": "^0.10.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "jwk-to-pem": "^2.0.7",

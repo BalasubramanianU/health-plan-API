@@ -1,8 +1,9 @@
 const express = require("express");
 const AJV = require("ajv");
 
-const ApiError = require("../utils/ApiError");
 const redisClient = require("../utils/db");
+const { publishMessage } = require("../utils/publisher");
+const ApiError = require("../utils/ApiError");
 const etagCreater = require("../utils/eTagCreater");
 const { postSchema, patchSchema } = require("../models/schema");
 
@@ -22,11 +23,20 @@ router.post("/", async (req, res, next) => {
     return next(ApiError.badRequest());
   }
 
-  redisClient.set(req.body["objectId"], JSON.stringify(req.body), (err) => {
-    if (err) {
-      return next(ApiError.serviceUnavailable());
+  // Save to Redis
+  await redisClient.set(
+    req.body["objectId"],
+    JSON.stringify(req.body),
+    (err) => {
+      if (err) {
+        return next(ApiError.serviceUnavailable());
+      }
     }
-  });
+  );
+
+  // Publish message to RabbitMQ
+  await publishMessage("POST", req.body);
+
   const response = await redisClient.get(req.body["objectId"]);
   res.set("Etag", etagCreater(JSON.stringify(response)));
   return res.status(201).send(req.body);
@@ -141,6 +151,9 @@ router.patch("/:planId", async (req, res, next) => {
     const updatedData = JSON.stringify(planData);
     await redisClient.set(req.body["objectId"], updatedData);
 
+    // Publish message to RabbitMQ
+    await publishMessage("PATCH", planData);
+
     // Generate new ETag
     const newEtag = etagCreater(JSON.stringify(updatedData));
     res.set("ETag", newEtag);
@@ -154,10 +167,15 @@ router.patch("/:planId", async (req, res, next) => {
 
 router.delete("/:planId", async (req, res, next) => {
   try {
+    const redisObject = await redisClient.get(req.params.planId);
     const response = await redisClient.del(req.params.planId);
     if (response == 0) {
       return next(ApiError.notFound());
     }
+
+    // Publish message to RabbitMQ
+    await publishMessage("DELETE", JSON.parse(redisObject));
+
     return res.status(204).end();
   } catch (err) {
     console.log(err);
