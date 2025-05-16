@@ -60,7 +60,7 @@ Setup Reference: https://blog.postman.com/how-to-access-google-apis-using-oauth-
    6. Initially, you would need to sign in, after it, you will receive the auth code, click `Get New Access Token`. Choose `Use Token` and change the token type to `ID Token` in the Postman Authorization settings page.
    7. Repeat step 7, whenever you need a new token or if your token expires
 
-# Accessing services in docker containers
+## Accessing services in docker containers
 
 - Kibana - [localhost:](http://localhost:5601/app/dev_tools#/console)
 - RabbitMQ - http://localhost:15672/#/
@@ -69,7 +69,7 @@ Setup Reference: https://blog.postman.com/how-to-access-google-apis-using-oauth-
   - `keys *` to view all the keys
   - `get <key>` to see their values
 
-# Endpoints Demo:
+## Endpoints Demo:
 
 - In Postman, for each endpoint request have the authorization header as `Oauth 2.0` with Token type as `ID token`. You can either choose Inherit auth from parent and configure OAuth 2.0 header for a group or you can choose OAuth 2.0 individually for each endpoint and set it up.
 
